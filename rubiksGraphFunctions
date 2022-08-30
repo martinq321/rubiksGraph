@@ -112,3 +112,4 @@ permprod[moves_]:=PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[con
 order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[conv3@moves,t]]=={},Return[t]],{t,Infinity}];*)
 (*naive order:order/@Take[StringJoin[Riffle[#," "]]&/@Tuples[{"R","L","F","B","U","D","U'","L'","F'","R'","B'","D'"},{2}],All] LCM order: Table[Module[{list,o3},list=StringJoin[Riffle[#," "]]&/@Tuples[{"R","L","F","B","U","D","U'","L'","F'","R'","B'","D'"},{t}];
 o3=If[permprod@#=={},1,orderQ@#]&/@list;N[Mean@o3]],{t,3}] https://math.stackexchange.com/questions/3357124/how-to-find-the-order-of-a-rubiks-cube-algorithm https://blog.plover.com/math/fixpoints.html https://rubiks.fandom.com/wiki/Cube_Theory#Group_Theory*)
+
