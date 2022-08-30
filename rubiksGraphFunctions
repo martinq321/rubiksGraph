@@ -97,7 +97,7 @@ Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoin
 explodeA[moves_]:=explode[moves,solvedA];
 explodeC[moves_]:=explode[moves,solvedC];
 (*moves1="L' U' R' B R D R' F2 U D2 L' U2 L' B2 D2 R U2 L D2";
-displayCycles[moves1]
+displayCyclesC[moves1]
 explodeA[moves1]*)
 (*https://www.wolfram.com/mathematica/new-in-8/group-theory-algorithms/stabilizer-chain-for-the-3x3x3-rubik-group.html*)
 (*# https: //sagecell.sagemath.org C=CubeGroup () C.parse ("L' U' R' B R D R' F2 U D2 L' U2 L' B2 D2 R U2 L D2")*)
