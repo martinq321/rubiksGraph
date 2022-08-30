@@ -1,8 +1,4 @@
-(*ToExpression/@Import["https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions"];*)
-(*NotebookEvaluate["C:\\Program Files\\Wolfram Research\\Mathematica\\12.2\\AddOns\\Packages\\munsell\\rubikGroup.nb"]*)
-(*https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions*)
-(*https://github.com/martinq321/rubiksGraph/blob/main/rubiksGraphFunctions*)
-ClearAll["Global`*"];
+(*ToExpression/@Import["https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions"];*)(*NotebookEvaluate["C:\\Program Files\\Wolfram Research\\Mathematica\\12.2\\AddOns\\Packages\\munsell\\rubikGroup.nb"]*)(*https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions*)(*https://github.com/martinq321/rubiksGraph/blob/main/rubiksGraphFunctions*)ClearAll["Global`*"];
 ((*Geometry*)With[{eps=0.05},ucoords={{-1/2,-1/2,-1/2},{-1/2,-1/2,1/2},{-1/2,1/2,-1/2},{-1/2,1/2,1/2},{1/2,-1/2,-1/2},{1/2,-1/2,1/2},{1/2,1/2,-1/2},{1/2,1/2,1/2}}*(1-eps);];
 cindices={{8,4,2,6},{8,6,5,7},{8,7,3,4},{4,3,1,2},{1,3,7,5},{2,1,5,6}};
 cubeletA[orig_,cols_List]:=GraphicsComplex[#+orig&/@ucoords,MapThread[{FaceForm[#1],Polygon[#2,VertexTextureCoordinates->{{0,0},{1,0},{1,1},{0,1}}]}&,{cols,cindices}]];
@@ -59,11 +55,9 @@ twist[move_,cube_]:=permute[perm[move],rot[move],cube];
 With[{allPositions=Round[Flatten[origins+2,2]]},twisting[m_,\[Alpha]_,cube_]:=Module[{mp},mp=Flatten[perm[m],1];
 Join[Extract[cube,Complement[allPositions,mp]],turn[m,\[Alpha],Extract[cube,mp]]]]];
 (*keyboard modifiers*)mod[m_]:=Which[CurrentValue["AltKey"]||CurrentValue["ControlKey"],half[m],CurrentValue["ShiftKey"],inv[m],True,m]);
-(*incorrect:
-conv1[string_]:=Quiet@Flatten[If[#[[1]]!=#[[2]]&&Length@#>1,{StringJoin@#},#]&@Flatten@If[Last@#=="2",StringJoin/@{Drop[#,-1],Drop[#,-1]},#]&/@(Flatten@Characters[#]&/@Split[StringSplit[#," "]])]&@string;
+(*incorrect:conv1[string_]:=Quiet@Flatten[If[#[[1]]!=#[[2]]&&Length@#>1,{StringJoin@#},#]&@Flatten@If[Last@#=="2",StringJoin/@{Drop[#,-1],Drop[#,-1]},#]&/@(Flatten@Characters[#]&/@Split[StringSplit[#," "]])]&@string;
 conv2[string_]:=If[Length@#==1,#[[1]],#[[1]]<>"2"]&/@Split[StringSplit[#," "]]&@string;
-conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],#]&/@Characters/@conv1@#]&@string;
-*)
+conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],#]&/@Characters/@conv1@#]&@string;*)
 conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],If[Length@#==2&&#[[2]]=="2",ConstantArray[#[[1]],2],If[Length@#==3&&#[[2]]=="'"&&#[[3]]=="2",ConstantArray[#[[1]],2],#]]]&/@(Characters[#]&/@StringSplit[#," "])]&@string;
 cubeA[string_,viewpoint_]:=Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->viewpoint]&@Fold[twist[#2,#]&,solvedA,ToExpression/@ToLowerCase/@conv3@#]&@string;
 cubeA[string_]:=cubeA[string,{Pi,Pi,Pi}];
@@ -85,7 +79,7 @@ front=Cycles[cubegroup[[3]]];
 right=Cycles[cubegroup[[4]]];
 back=Cycles[cubegroup[[5]]];
 down=Cycles[cubegroup[[6]]];
-RubikGroup = PermutationGroup[{up, left, front, right, back, down}];
+RubikGroup=PermutationGroup[{up,left,front,right,back,down}];
 perms2a=Flatten[Table[PermutationProduct[t,#][[1]]&/@{up,left,front,right,back,down},{t,{up,left,front,right,back,down}}],1];
 permprodHold[moves_]:=PermutationProduct[##]&@@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]]&@moves;
 permprod[moves_]:=PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@moves;
@@ -94,17 +88,11 @@ comparisonGridC[moves_]:=Grid[{{cubeC[""],cubeC[moves]},Graphics3D[Rotate[#,Pi,{
 displayCyclesA[moves_]:=Grid[{{Column@permprod[moves]},{graph[moves],comparisonGridA[moves]}}];
 displayCyclesC[moves_]:=Grid[{{Column@permprod[moves]},{graph[moves],comparisonGridC[moves]}}];
 explode[moves_,solve_]:=Module[{gc},gc=Fold[twist[#2,#]&,solve,ToExpression/@ToLowerCase/@conv3@#]&@moves;
-Grid[Partition[{Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Tuples[{1,3},{3}]],
-Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Complement[Tuples[{1,2,3},{3}],Tuples[{1,3},{3}],Table[{2,2,t},{t,3}],Table[{t,2,2},{t,3}],Table[{2,t,2},{t,3}]]],
-Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Join[Table[{2,2,t},{t,3}],Table[{t,2,2},{t,3}],Table[{2,t,2},{t,3}]]],
-Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{3}]&/@Tuples[{1,2,3},{2}])],
-Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{2}]&/@Tuples[{1,2,3},{2}])],
-Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{1}]&/@Tuples[{1,2,3},{2}])]},UpTo[3]]]];
+Grid[Partition[{Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Tuples[{1,3},{3}]],Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Complement[Tuples[{1,2,3},{3}],Tuples[{1,3},{3}],Table[{2,2,t},{t,3}],Table[{t,2,2},{t,3}],Table[{2,t,2},{t,3}]]],Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Join[Table[{2,2,t},{t,3}],Table[{t,2,2},{t,3}],Table[{2,t,2},{t,3}]]],Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{3}]&/@Tuples[{1,2,3},{2}])],Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{2}]&/@Tuples[{1,2,3},{2}])],Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@(Join[{#[[1]]},{#[[2]]},{1}]&/@Tuples[{1,2,3},{2}])]},UpTo[3]]]];
 explodeA[moves_]:=explode[moves,solvedA];
 explodeC[moves_]:=explode[moves,solvedC];
 (*moves1="L' U' R' B R D R' F2 U D2 L' U2 L' B2 D2 R U2 L D2";
-displayCyclesC[moves1]
-explodeA[moves1]*)
+displayCyclesC[moves1] explodeA[moves1]*)
 (*https://www.wolfram.com/mathematica/new-in-8/group-theory-algorithms/stabilizer-chain-for-the-3x3x3-rubik-group.html*)
 (*# https: //sagecell.sagemath.org C=CubeGroup () C.parse ("L' U' R' B R D R' F2 U D2 L' U2 L' B2 D2 R U2 L D2")*)
 (*expr=ToExpression["{"<>StringReplace[StringReplace[StringReplace[#,Thread[{"(",")"}->{"{","}"}]],Thread[{"},{"}->{"}},{{"}]],Thread[{"}{"}->{"},{"}]]<>"}"]&@"(1,16,40,6,27,48,30,9,22,14,17,3,32,43,35,41,46,11,33,38,24)(4,12,28,26,45,15,13,18,29,39,42)(5,31,44,20,7,36,47,23,10,37,21)(8,19,25)";
@@ -114,20 +102,12 @@ expr=ToExpression["{"<>StringReplace[StringReplace[StringReplace[#,Thread[{"(","
 (*cubegroup//Column Tuples[{"R","L","F","B","U","D"},{2}][[Position[perms2a,cycles["F D"]][[1,1]]]] GroupStabilizerChain[RubikGroup]/. gr_PermutationGroup:>GroupOrder[gr]//Column*)
 (*permprod@"L' U' R' B R D R' F2 U D2 L' U2 L' B2 D2 R U2 L D2" PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@StringJoin[Riffle[{"B","B","F","B","B","B","U","B"}," "]]*)
 (*ppUpTo6=Table[PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@StringJoin[Riffle[#," "]]&/@Tuples[{"R","L","F","B","U","D"},{n}],{n,6}];//Timing*)
-order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[moves,t]]=={},Return[t]],{t,Infinity}];
-(*
-cubegroup={{{1,3,8,6},{2,5,7,4},{9,33,25,17},{10,34,26,18},{11,35,27,19}},{{9,11,16,14},{10,13,15,12},{1,17,41,40},{4,20,44,37},{6,22,46,35}},{{17,19,24,22},{18,21,23,20},{6,25,43,16},{7,28,42,13},{8,30,41,11}},{{25,27,32,30},{26,29,31,28},{3,38,43,19},{5,36,45,21},{8,33,48,24}},{{33,35,40,38},{34,37,39,36},{3,9,46,32},{2,12,47,29},{1,14,48,27}},{{41,43,48,46},{42,45,47,44},{14,22,30,38},{15,23,31,39},{16,24,32,40}}};
+order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[conv3@moves,t]]=={},Return[t]],{t,Infinity}];
+(*orders=Rest[DeleteCases[If[Length@#>1,{First@#,Last@#},""]&/@(Most/@Import["https://mzrg.com/rubik/orders.shtml","Data"]),""]]*)
+orderQ[moves_]:=LCM[##]&@@(Length/@permprod@moves);
+(*cubegroup={{{1,3,8,6},{2,5,7,4},{9,33,25,17},{10,34,26,18},{11,35,27,19}},{{9,11,16,14},{10,13,15,12},{1,17,41,40},{4,20,44,37},{6,22,46,35}},{{17,19,24,22},{18,21,23,20},{6,25,43,16},{7,28,42,13},{8,30,41,11}},{{25,27,32,30},{26,29,31,28},{3,38,43,19},{5,36,45,21},{8,33,48,24}},{{33,35,40,38},{34,37,39,36},{3,9,46,32},{2,12,47,29},{1,14,48,27}},{{41,43,48,46},{42,45,47,44},{14,22,30,38},{15,23,31,39},{16,24,32,40}}};
 conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],If[Length@#==2&&#[[2]]=="2",ConstantArray[#[[1]],2],If[Length@#==3&&#[[2]]=="'"&&#[[3]]=="2",ConstantArray[#[[1]],2],#]]]&/@(Characters[#]&/@StringSplit[#," "])]&@string;
 up=Cycles[cubegroup[[1]]];left=Cycles[cubegroup[[2]]];front=Cycles[cubegroup[[3]]];right=Cycles[cubegroup[[4]]];back=Cycles[cubegroup[[5]]];down=Cycles[cubegroup[[6]]];
 permprod[moves_]:=PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@moves;
 order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[conv3@moves,t]]=={},Return[t]],{t,Infinity}];*)
-orderQ[moves_] := LCM[##] & @@ (Length /@ permprod@moves);
-(*
-naive order:
-order/@Take[StringJoin[Riffle[#," "]]&/@Tuples[{"R","L","F","B","U","D","U'","L'","F'","R'","B'","D'"},{2}],All]
-LCM order:
-orderQ[moves_] := LCM[##] & @@ (Length /@ permprod@moves);
-https://math.stackexchange.com/questions/3357124/how-to-find-the-order-of-a-rubiks-cube-algorithm
-https://blog.plover.com/math/fixpoints.html
-https://rubiks.fandom.com/wiki/Cube_Theory#Group_Theory
-*)
+(*naive order:order/@Take[StringJoin[Riffle[#," "]]&/@Tuples[{"R","L","F","B","U","D","U'","L'","F'","R'","B'","D'"},{2}],All] LCM order https://math.stackexchange.com/questions/3357124/how-to-find-the-order-of-a-rubiks-cube-algorithm https://blog.plover.com/math/fixpoints.html https://rubiks.fandom.com/wiki/Cube_Theory#Group_Theory*)
