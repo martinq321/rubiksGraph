@@ -1,5 +1,8 @@
-(*ToExpression/@Import["https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions"];*)(*NotebookEvaluate["C:\\Program Files\\Wolfram Research\\Mathematica\\12.2\\AddOns\\Packages\\munsell\\rubikGroup.nb"]*)
-(*https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions*)(*https://github.com/martinq321/rubiksGraph/blob/main/rubiksGraphFunctions*)ClearAll["Global`*"];
+(*ToExpression/@Import["https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions"];*)
+(*NotebookEvaluate["C:\\Program Files\\Wolfram Research\\Mathematica\\12.2\\AddOns\\Packages\\munsell\\rubikGroup.nb"]*)
+(*https://raw.githubusercontent.com/martinq321/rubiksGraph/main/rubiksGraphFunctions*)
+(*https://github.com/martinq321/rubiksGraph/blob/main/rubiksGraphFunctions*)
+ClearAll["Global`*"];
 ((*Geometry*)With[{eps=0.05},ucoords={{-1/2,-1/2,-1/2},{-1/2,-1/2,1/2},{-1/2,1/2,-1/2},{-1/2,1/2,1/2},{1/2,-1/2,-1/2},{1/2,-1/2,1/2},{1/2,1/2,-1/2},{1/2,1/2,1/2}}*(1-eps);];
 cindices={{8,4,2,6},{8,6,5,7},{8,7,3,4},{4,3,1,2},{1,3,7,5},{2,1,5,6}};
 cubeletA[orig_,cols_List]:=GraphicsComplex[#+orig&/@ucoords,MapThread[{FaceForm[#1],Polygon[#2,VertexTextureCoordinates->{{0,0},{1,0},{1,1},{0,1}}]}&,{cols,cindices}]];
