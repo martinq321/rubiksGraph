@@ -83,7 +83,10 @@ RubikGroup=PermutationGroup[{right,left,front,back,up,down}];
 perms2a=Flatten[Table[PermutationProduct[t,#][[1]]&/@{up,left,front,right,back,down},{t,{up,left,front,right,back,down}}],1];
 permprodHold[moves_]:=PermutationProduct[##]&@@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]]&@moves;
 permprod[moves_]:=PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@moves;
-displayCycles[moves_]:=Grid[{{Column@(*cycles[moves]*)permprod@moves},{graph[moves],Grid[{{cubeC[""],cubeC[moves]},Graphics3D[Rotate[#,Pi,{1,0,0}],Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{-Pi,Pi,Pi}]&@Fold[twist[#2,#]&,solvedC,ToExpression/@ToLowerCase/@conv3@#]&/@{"",moves}}]}}];
+comparisonGridA[moves_]:=Grid[{{cubeA[""],cubeA[moves]},Graphics3D[Rotate[#,Pi,{1,0,0}],Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{-Pi,Pi,Pi}]&@Fold[twist[#2,#]&,solvedA,ToExpression/@ToLowerCase/@conv3@#]&/@{"",moves}}];
+comparisonGridC[moves_]:=Grid[{{cubeC[""],cubeC[moves]},Graphics3D[Rotate[#,Pi,{1,0,0}],Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->{-Pi,Pi,Pi}]&@Fold[twist[#2,#]&,solvedC,ToExpression/@ToLowerCase/@conv3@#]&/@{"",moves}}];
+displayCyclesA[moves_]:=Grid[{{Column@permprod[moves]},{graph[moves],comparisonGridA[moves]}}];
+displayCyclesC[moves_]:=Grid[{{Column@permprod[moves]},{graph[moves],comparisonGridC[moves]}}];
 explode[moves_,solve_]:=Module[{gc},gc=Fold[twist[#2,#]&,solve,ToExpression/@ToLowerCase/@conv3@#]&@moves;
 Grid[Partition[{Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Tuples[{1,3},{3}]],
 Graphics3D[#,Boxed->False,Lighting->{{"Ambient", White}},ImageSize->200,ViewPoint->{Pi,Pi,Pi}]&[gc[[##]]&@@@Complement[Tuples[{1,2,3},{3}],Tuples[{1,3},{3}],Table[{2,2,t},{t,3}],Table[{t,2,2},{t,3}],Table[{2,t,2},{t,3}]]],
