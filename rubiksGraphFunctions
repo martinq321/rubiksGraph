@@ -59,9 +59,12 @@ twist[move_,cube_]:=permute[perm[move],rot[move],cube];
 With[{allPositions=Round[Flatten[origins+2,2]]},twisting[m_,\[Alpha]_,cube_]:=Module[{mp},mp=Flatten[perm[m],1];
 Join[Extract[cube,Complement[allPositions,mp]],turn[m,\[Alpha],Extract[cube,mp]]]]];
 (*keyboard modifiers*)mod[m_]:=Which[CurrentValue["AltKey"]||CurrentValue["ControlKey"],half[m],CurrentValue["ShiftKey"],inv[m],True,m]);
+(*incorrect:
 conv1[string_]:=Quiet@Flatten[If[#[[1]]!=#[[2]]&&Length@#>1,{StringJoin@#},#]&@Flatten@If[Last@#=="2",StringJoin/@{Drop[#,-1],Drop[#,-1]},#]&/@(Flatten@Characters[#]&/@Split[StringSplit[#," "]])]&@string;
 conv2[string_]:=If[Length@#==1,#[[1]],#[[1]]<>"2"]&/@Split[StringSplit[#," "]]&@string;
 conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],#]&/@Characters/@conv1@#]&@string;
+*)
+conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],If[Length@#==2&&#[[2]]=="2",ConstantArray[#[[1]],2],If[Length@#==3&&#[[2]]=="'"&&#[[3]]=="2",ConstantArray[#[[1]],2],#]]]&/@(Characters[#]&/@StringSplit[#," "])]&@string;
 cubeA[string_,viewpoint_]:=Graphics3D[#,Boxed->False,Lighting->{{"Ambient",White}},ImageSize->200,ViewPoint->viewpoint]&@Fold[twist[#2,#]&,solvedA,ToExpression/@ToLowerCase/@conv3@#]&@string;
 cubeA[string_]:=cubeA[string,{Pi,Pi,Pi}];
 cube=cubeA;solved=solvedA;
@@ -114,9 +117,7 @@ expr=ToExpression["{"<>StringReplace[StringReplace[StringReplace[#,Thread[{"(","
 order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[moves,t]]=={},Return[t]],{t,Infinity}];
 (*
 cubegroup={{{1,3,8,6},{2,5,7,4},{9,33,25,17},{10,34,26,18},{11,35,27,19}},{{9,11,16,14},{10,13,15,12},{1,17,41,40},{4,20,44,37},{6,22,46,35}},{{17,19,24,22},{18,21,23,20},{6,25,43,16},{7,28,42,13},{8,30,41,11}},{{25,27,32,30},{26,29,31,28},{3,38,43,19},{5,36,45,21},{8,33,48,24}},{{33,35,40,38},{34,37,39,36},{3,9,46,32},{2,12,47,29},{1,14,48,27}},{{41,43,48,46},{42,45,47,44},{14,22,30,38},{15,23,31,39},{16,24,32,40}}};
-conv1[string_]:=Quiet@Flatten[If[#[[1]]!=#[[2]]&&Length@#>1,{StringJoin@#},#]&@Flatten@If[Last@#=="2",StringJoin/@{Drop[#,-1],Drop[#,-1]},#]&/@(Flatten@Characters[#]&/@Split[StringSplit[#," "]])]&@string;
-conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],#]&/@Characters/@conv1@#]&@string;
+conv3[string_]:=Flatten[If[Length@#==2&&#[[2]]=="'",ConstantArray[#[[1]],3],If[Length@#==2&&#[[2]]=="2",ConstantArray[#[[1]],2],If[Length@#==3&&#[[2]]=="'"&&#[[3]]=="2",ConstantArray[#[[1]],2],#]]]&/@(Characters[#]&/@StringSplit[#," "])]&@string;
 up=Cycles[cubegroup[[1]]];left=Cycles[cubegroup[[2]]];front=Cycles[cubegroup[[3]]];right=Cycles[cubegroup[[4]]];back=Cycles[cubegroup[[5]]];down=Cycles[cubegroup[[6]]];
 permprod[moves_]:=PermutationProduct[##][[1]]&@@(ToExpression/@StringReplace[conv3@#,Thread[{"U","L","F","R","B","D"}->{"up","left","front","right","back","down"}]])&@moves;
-order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[moves,t]]=={},Return[t]],{t,Infinity}];
-*)
+order[moves_]:=Do[If[permprod@StringJoin[Riffle[#," "]]&@Flatten[ConstantArray[conv3@moves,t]]=={},Return[t]],{t,Infinity}];*)
